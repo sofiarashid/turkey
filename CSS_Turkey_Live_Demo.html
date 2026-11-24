@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanksgiving Turkey | CSS Live Demo</title>
+    <!--
+  HONORS ADVANCED WEB DESIGN 2 | CSS LIVE DEMO
+
+  “Thanksgiving Turkey” by Álvaro Montoro
+  https://codepen.io/alvaromontoro/pen/GRjKBvp
+  Original HTML and CSS, with classroom comments added.
+
+  BEFORE CLASS
+  Open this file in a browser as your finished reference. Save a second
+  copy as index.html. In that copy, remove the CSS from STEP 1 through
+  the last .tail:nth-child rule. Keep the three page setup rules, the
+  corner badge styles and all the HTML. Have the two files open side
+  by side in VS Code. Save and refresh after each step.
+
+  LIVE-CODING ORDER | ABOUT 30 MINUTES
+  1. Body (4 min) — Center the rectangle, then round it into a circle.
+  2. Wings (4 min) — Draw one wing and mirror the other.
+  3. Head, neck and face (7 min) — Reveal the neck with ::before.
+     Then add the two eyes, triangle beak and red snood.
+  4. Legs and toes (4 min) — Reuse one leg style and rotate the toes.
+  5. Hat (4 min) — Build the brim and crown, then add the buckle.
+  6. Feather fan (7 min) — Start with one visible feather. Rotate
+     around its base, then reveal the full fan and alternating colors.
+
+  QUICK CLASS CHECK
+  Ask students to point to one example of symmetry and one of repetition.
+  For a DevTools experiment, toggle the neck's ::before rule or change a
+  feather's pivot. Refresh to bring back the original design.
+
+  MIT License
+  Copyright (c) 2020 Álvaro Montoro
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+    <style>
+        /* PAGE SETUP
+   Keep these three rules in the live-coding copy. */
+        html,
+        body {
+            overflow: hidden;
+            background: #fee;
+        }
+
+        /* Reuse the palette below. Both sides use vmin, so the square scales
+   with the shorter side of the browser window. top and left put its
+   corner at the center. translate pulls it back by half its own size. */
+        .cartoon {
+            --brown1: #753;
+            --brown2: #975;
+            --orange1: orange;
+            --orange2: darkorange;
+            width: 80vmin;
+            height: 80vmin;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Absolute positioning lets the parts overlap. Offsets use the nearest
+   positioned ancestor. Most parts use .cartoon. The face uses .head
+   because its parts are nested inside it. border-box keeps borders
+   inside the declared width and height. */
+        .cartoon div {
+            position: absolute;
+            box-sizing: border-box;
+        }
+
+        /* STEP 1 | BODY
+   Width and height are both 40% of the square canvas. Set the color
+   and refresh to see the square, then use border-radius to round it. */
+        .body {
+            width: 40%;
+            height: 40%;
+            background: var(--brown1);
+            color: var(--brown1);
+            border-radius: 50%;
+            /* left measures from the canvas. translate measures from the body.
+    Together they center the body horizontally. */
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            /* Two sharp shadows shrink and shift down to add small details where
+    the legs meet the body. They pick up the CSS color. */
+            box-shadow:
+                -4vmin 14.5vmin 0 -13vmin,
+                4vmin 14.5vmin 0 -13vmin
+        }
+
+        /* STEP 2 | WINGS
+   Rounded and sharp corners shape the wing. Use the top-right corner
+   as the pivot so the wing tilts from where it meets the body. */
+        .wing {
+            height: 30%;
+            width: 20%;
+            background: var(--brown2);
+            border-radius: 100% 0% 100% 5%;
+            top: 41%;
+            left: 23%;
+            transform-origin: top right;
+            transform: rotate(-10deg);
+        }
+
+        /* The + selects the wing immediately after the first one. left: auto
+   clears the shared left offset so right can place it. scaleX(-1)
+   mirrors both the shape and its tilt. */
+        .wing+.wing {
+            left: auto;
+            right: 43%;
+            transform: scaleX(-1) rotate(-10deg);
+        }
+
+        /* STEP 3 | HEAD, NECK AND FACE
+   Start with a circle. clip-path cuts a flat edge where the hat sits.
+   The clip extends below the circle to leave room for the neck. */
+        .head {
+            width: 19%;
+            height: 19%;
+            border-radius: 50%;
+            background: var(--brown2);
+            top: 15%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            clip-path: polygon(0% 20%, 100% 20%, 100% 500%, 0% 500%);
+        }
+
+        /* content: "" creates a box for the neck. It starts 80% down the head
+   so the two shapes overlap. The same brown fills the join, and the
+   last two corner radii round off the bottom. Refresh here. */
+        .head::before {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 40%;
+            height: 120%;
+            background: var(--brown2);
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            border-radius: 0 0 100% 100% / 30%;
+        }
+
+        /* Draw one black dot 2.5vmin left of center. With zero blur, its shadow
+   makes a second dot 5vmin to the right, so the eyes are evenly spaced. */
+        .eye {
+            width: 10%;
+            height: 10%;
+            background: black;
+            border-radius: 50%;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, 0) translate(-2.5vmin, 0);
+            box-shadow: 5vmin 0
+        }
+
+        /* The top and bottom borders are transparent. They taper the orange
+   left border into a triangle that points to the right. */
+        .beak {
+            width: 4vmin;
+            height: 3vmin;
+            border-left: 4vmin solid var(--orange1);
+            border-top: 1.5vmin solid transparent;
+            border-bottom: 1.5vmin solid transparent;
+            top: 60%;
+            left: 50%;
+        }
+
+        /* The snood starts at the same center line as the beak. Shifting it
+   left by its full width places it just to the left of that line. */
+        .red {
+            width: 2.5vmin;
+            height: 6vmin;
+            background: #d00;
+            border-radius: 100% / 100% 0 100% 100%;
+            top: 60%;
+            left: 50%;
+            transform: translate(-100%, 0);
+        }
+
+        /* STEP 4 | LEGS AND TOES
+   Start both legs at the center and shift them 4vmin in opposite
+   directions. The repeating gradient adds thin stripes over the orange. */
+        .leg {
+            width: 3%;
+            height: 21%;
+            background: var(--orange1);
+            top: 79%;
+            left: 50%;
+            transform: translate(-50%, 0) translate(-4vmin, 0);
+            border-radius: 5vmin / 50%;
+            background-image:
+                repeating-linear-gradient(transparent 0 10%, rgba(0, 0, 0, 0.1) 0 11%);
+        }
+
+        .leg+.leg {
+            transform: translate(-50%, 0) translate(4vmin, 0);
+        }
+
+        /* Each leg gets two toes from the same rule. Both pivot at the top
+   center so they stay attached as they rotate. The final rule turns
+   the second toe the opposite way so the toes spread apart. */
+        .leg::before,
+        .leg::after {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 80%;
+            height: 35%;
+            left: 50%;
+            bottom: 0;
+            background: var(--orange1);
+            border-radius: 5vmin;
+            transform-origin: 50% 0;
+            transform: translate(-50%, 0) rotate(30deg);
+        }
+
+        .leg::after {
+            transform: translate(-50%, 0) rotate(-30deg);
+        }
+
+        /* STEP 5 | HAT
+   Start with a wide, short oval for the brim. The inset shadow stays
+   inside the crown and paints the lighter band across the bottom. */
+        .hat-bottom {
+            width: 35%;
+            height: 8%;
+            border-radius: 50%;
+            background: black;
+            top: 15%;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+
+        .hat-top {
+            width: 16%;
+            height: 20%;
+            background: black;
+            box-shadow: inset 0 -7vmin #fff3;
+            border-radius: 100% / 230% 230% 0% 0%;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+
+        /* A small bordered box makes the buckle. Its position is measured
+   from the crown, so it follows the hat if the hat moves. */
+        .hat-top::before {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 40%;
+            height: 2vmin;
+            border: 1vmin solid #772;
+            border-radius: 1vmin;
+            bottom: 3.25vmin;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+
+        /* STEP 6 | ALL 13 TAIL FEATHERS
+   All 13 feathers overlap until their angles differ. The feather divs
+   come first in the HTML, so the rest of the turkey paints over them. */
+        .tail {
+            width: 10%;
+            height: 40%;
+            background: var(--orange1);
+            border-radius: 100% / 30% 30% 170% 170%;
+            /* Put the pivot at the center of the bottom edge so the tips fan out
+    while the bases stay together. */
+            transform-origin: 50% 100%;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+
+        /* nth-child counts all children of .cartoon in HTML order. Since the
+   feathers come first, odd and even alternate the feather colors. */
+        .tail:nth-child(odd) {
+            background: var(--orange1);
+        }
+
+        .tail:nth-child(even) {
+            background: var(--orange2);
+        }
+
+        /* Each transform replaces the base transform, so keep translate to
+   center every feather on the same line. One upright feather and pairs
+   of equal positive and negative angles make a symmetric fan.
+   Add the 17deg rule first and toggle transform-origin in DevTools. */
+        .tail:nth-child(1) {
+            transform: translate(-50%, 0) rotate(0);
+        }
+
+        .tail:nth-child(2) {
+            transform: translate(-50%, 0) rotate(17deg);
+        }
+
+        .tail:nth-child(3) {
+            transform: translate(-50%, 0) rotate(34deg);
+        }
+
+        .tail:nth-child(4) {
+            transform: translate(-50%, 0) rotate(51deg);
+        }
+
+        .tail:nth-child(5) {
+            transform: translate(-50%, 0) rotate(68deg);
+        }
+
+        .tail:nth-child(6) {
+            transform: translate(-50%, 0) rotate(85deg);
+        }
+
+        .tail:nth-child(7) {
+            transform: translate(-50%, 0) rotate(102deg);
+        }
+
+        .tail:nth-child(8) {
+            transform: translate(-50%, 0) rotate(-17deg);
+        }
+
+        .tail:nth-child(9) {
+            transform: translate(-50%, 0) rotate(-34deg);
+        }
+
+        .tail:nth-child(10) {
+            transform: translate(-50%, 0) rotate(-51deg);
+        }
+
+        .tail:nth-child(11) {
+            transform: translate(-50%, 0) rotate(-68deg);
+        }
+
+        .tail:nth-child(12) {
+            transform: translate(-50%, 0) rotate(-85deg);
+        }
+
+        .tail:nth-child(13) {
+            transform: translate(-50%, 0) rotate(-102deg);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cartoon">
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="tail"></div>
+        <div class="leg"></div>
+        <div class="leg"></div>
+        <div class="body"></div>
+        <div class="wing"></div>
+        <div class="wing"></div>
+        <div class="hat-top"></div>
+        <div class="hat-bottom"></div>
+        <div class="head">
+            <div class="eye"></div>
+            <div class="beak"></div>
+            <div class="red"></div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
